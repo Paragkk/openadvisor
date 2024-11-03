@@ -35,7 +35,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\parag\PyCodes\AWS codes\openadvisor\advenv"
+VIRTUAL_ENV="C:\Users\parag\PyCodes\AWS codes\openadvisor\adenv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
@@ -52,9 +52,9 @@ fi
 
 if [ -z "${VIRTUAL_ENV_DISABLE_PROMPT:-}" ] ; then
     _OLD_VIRTUAL_PS1="${PS1:-}"
-    PS1="(advenv) ${PS1:-}"
+    PS1="(adenv) ${PS1:-}"
     export PS1
-    VIRTUAL_ENV_PROMPT="(advenv) "
+    VIRTUAL_ENV_PROMPT="(adenv) "
     export VIRTUAL_ENV_PROMPT
 fi
 
