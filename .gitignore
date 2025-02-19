@@ -21,6 +21,7 @@ time_left.tsv
 events.out.tfevents
 events.out.tfevents.*
 *.tmp
+temp*
 
 # Ignore compiled Python files
 __pycache__/

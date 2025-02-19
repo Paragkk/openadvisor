@@ -11,27 +11,39 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        new_user = User(email=form.email.data, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-        send_welcome_email(new_user.email)
-        flash('User Registered Successfully', 'success')
-        return redirect(url_for('auth.login'))
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            email = form.email.data.lower() 
+            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            new_user = User(email=email, password=hashed_password)
+            db.session.add(new_user)
+            try:
+                db.session.commit()
+                send_welcome_email(new_user.email)
+                flash('User Registered Successfully', 'success')
+                return redirect(url_for('auth.login'))
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Registration failed due to a database error: {str(e)}', 'danger')
+        else:
+            flash('Please correct the errors in the form and try again.', 'danger')
     return render_template('register.html', form=form)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user)
-            flash('Login Successful', 'success')
-            return redirect(url_for('dashboard.show_dashboard'))
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            email = form.email.data.lower()  
+            user = User.query.filter_by(email=email).first()
+            if user and bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                flash('Login Successful', 'success')
+                return redirect(url_for('dashboard.show_dashboard'))
+            else:
+                flash('Login Unsuccessful. Please check email and password', 'danger')
         else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
+            flash('Invalid email format. Please enter a valid email address.', 'danger')
     return render_template('login.html', form=form)
 
 @auth_bp.route('/logout')
